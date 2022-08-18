@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('date');
             $table->double('deposit')->nullable();
             $table->double('discount')->nullable();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

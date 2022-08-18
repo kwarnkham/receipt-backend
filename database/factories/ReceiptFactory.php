@@ -17,7 +17,10 @@ class ReceiptFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'customer_name' => fake()->name(),
+            'customer_phone' => fake()->phoneNumber(),
+            'customer_address' => fake()->address(),
+            'date' => now()
         ];
     }
 }

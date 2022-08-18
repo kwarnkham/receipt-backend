@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Item;
+use App\Models\Receipt;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -13,15 +14,13 @@ class ReceiptTest extends TestCase
     use RefreshDatabase;
 
     private $user;
+    private $user2;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->user = User::create([
-            'name' => fake()->name(),
-            'email' => fake()->safeEmail(),
-            'password' => bcrypt('123123'),
-        ]);
+        $this->user = User::factory()->create();
+        $this->user2 = User::factory()->create();
     }
 
     public function test_create_receipt()
@@ -108,5 +107,25 @@ class ReceiptTest extends TestCase
         $this->assertDatabaseCount('receipts', 2);
         $this->assertDatabaseCount('receipt_item', 4);
         $this->assertDatabaseCount('items', 2);
+    }
+
+    public function test_find_a_receipt()
+    {
+        $receipt = Receipt::factory()->create(['user_id' => $this->user->id]);
+        $response = $this->actingAs($this->user)->getJson('/api/receipt/' . $receipt->id);
+        $response->assertOk();
+        $response->assertJson($receipt->toArray());
+    }
+
+    public function test_can_find_only_owned_receipt()
+    {
+        $receipt = Receipt::factory()->create(['user_id' => $this->user->id]);
+        $response = $this->actingAs($this->user2)->getJson('/api/receipt/' . $receipt->id);
+        $response->assertNotFound();
+    }
+
+    public function test_create_receipt_update_existing_item_price()
+    {
+        $this->assertTrue(true);
     }
 }

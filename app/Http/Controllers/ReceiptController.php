@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResponseStatus;
 use App\Http\Requests\StoreReceiptRequest;
 use App\Http\Requests\UpdateReceiptRequest;
 use App\Models\Item;
 use App\Models\Receipt;
+use Illuminate\Http\Request;
 
 class ReceiptController extends Controller
 {
@@ -38,14 +40,22 @@ class ReceiptController extends Controller
     public function store(StoreReceiptRequest $request)
     {
         $data = $request->validated();
-        $receipt = Receipt::create($data);
         $user = $request->user();
+        $data['user_id'] = $user->id;
+        $receipt = Receipt::create($data);
         $items = [];
         foreach ($data['items'] as $value) {
             $item = Item::query()->where([
                 'user_id' => $user->id,
                 'name' => $value['name']
-            ])->first() ?? $user->items()->create($value);
+            ])->first();
+
+            if ($item) {
+                $item->price = $value['price'];
+                $item->save();
+            } else {
+                $item = $user->items()->create($value);
+            }
 
             $item->quantity = $value['quantity'];
             $items[] = $item;
@@ -56,17 +66,20 @@ class ReceiptController extends Controller
                 'price' => $item->price,
             ]);
         }
-        return response()->json($receipt, 201);
+        return response()->json($receipt->fresh(), 201);
     }
 
     /**
      * Display the specified resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Receipt  $receipt
      * @return \Illuminate\Http\Response
      */
-    public function show(Receipt $receipt)
+    public function show(Request $request, Receipt $receipt)
     {
+        abort_unless($request->user()->id == $receipt->user->id, ResponseStatus::NOT_FOUND->value);
+        return response()->json($receipt);
     }
 
     /**

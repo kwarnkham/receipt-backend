@@ -18,6 +18,11 @@ class User extends Authenticatable
         return $this->hasMany(Item::class);
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role')->withTimestamps();
+    }
+
     public function receipts()
     {
         return $this->hasMany(Receipt::class);

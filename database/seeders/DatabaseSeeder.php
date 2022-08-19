@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()->create(['mobile' => '911', 'password' => bcrypt('123123')]);
+        User::create(['mobile' => '911', 'password' => bcrypt('123123')]);
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

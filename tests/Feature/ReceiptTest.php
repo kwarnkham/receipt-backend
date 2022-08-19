@@ -128,4 +128,13 @@ class ReceiptTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_retrieve_receipts()
+    {
+        $receipt = Receipt::factory(10)->create(['user_id' => $this->user->id]);
+
+        $response = $this->actingAs($this->user)->getJson('/api/receipt');
+        $response->assertOk();
+        $response->assertJson($receipt->toArray());
+    }
 }

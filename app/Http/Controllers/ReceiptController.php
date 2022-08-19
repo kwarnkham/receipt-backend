@@ -18,7 +18,8 @@ class ReceiptController extends Controller
      */
     public function index()
     {
-        //
+        $receipts = Receipt::all();
+        return response()->json($receipts);
     }
 
     /**

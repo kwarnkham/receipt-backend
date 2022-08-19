@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->controller(ReceiptController::class)->group(function () {
     Route::post('receipt', 'store');
+    Route::get('receipt', 'index');
     Route::get('receipt/{receipt}', 'show');
 });
 

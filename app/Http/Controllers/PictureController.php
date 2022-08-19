@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResponseStatus;
 use App\Http\Requests\StorePictureRequest;
 use App\Http\Requests\UpdatePictureRequest;
 use App\Models\Picture;
+use Illuminate\Support\Facades\Storage;
 
 class PictureController extends Controller
 {
@@ -36,7 +38,11 @@ class PictureController extends Controller
      */
     public function store(StorePictureRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['name'] = Storage::disk('s3')->putFile(config('app')['name'] . "/users", $data['picture'], 'public');
+        abort_unless($data['name'], ResponseStatus::SERVER_ERROR->value, 'Failed to upload to S3 storage');
+        $picture = Picture::create($data);
+        return response()->json($picture, ResponseStatus::CREATED->value);
     }
 
     /**

@@ -37,6 +37,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Picture::class);
     }
+
+    public function isAdmin()
+    {
+        return $this->roles->contains(function ($role) {
+            return $role->name == 'admin';
+        });
+    }
     /**
      * The attributes that are mass assignable.
      *

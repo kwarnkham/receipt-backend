@@ -13,7 +13,7 @@ class StorePictureRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return $this->user()->isAdmin();
     }
 
     /**
@@ -24,7 +24,9 @@ class StorePictureRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'user_id' => ['required', 'exists:users,id'],
+            'type' => ['required', 'in:1,2'],
+            'picture' => ['required', 'image']
         ];
     }
 }

@@ -27,6 +27,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Receipt::class);
     }
+
+    public function payments()
+    {
+        return $this->belongsToMany(Payment::class, 'user_payment')->withPivot(['account_name', 'number'])->withTimestamps();
+    }
     /**
      * The attributes that are mass assignable.
      *

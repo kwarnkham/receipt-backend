@@ -126,7 +126,54 @@ class ReceiptTest extends TestCase
 
     public function test_create_receipt_update_existing_item_price()
     {
-        $this->assertTrue(true);
+        $items = Item::factory(2)->create([
+            'user_id' => $this->user->id,
+            'price' => 500
+        ]);
+        $items = $items->map(function ($value) {
+            $value->quantity = 1;
+            return $value;
+        });
+        $response = $this->actingAs($this->user)->postJson('api/receipt', [
+            'date' => now(),
+            'customer_name' => fake()->name(),
+            'customer_phone' => fake()->phoneNumber(),
+            'customer_address' => fake()->address(),
+            'items' => $items
+        ]);
+
+        $oldValues = $response->json()['items'];
+
+
+        $response->assertCreated();
+        $this->assertDatabaseCount('receipts', 1);
+        $this->assertDatabaseCount('receipt_item', 2);
+        $this->assertDatabaseCount('items', 2);
+        $items = $items->map(function ($val) {
+            $val->price = 1000;
+            return $val;
+        });
+        $response = $this->actingAs($this->user)->postJson('api/receipt', [
+            'date' => now(),
+            'customer_name' => fake()->name(),
+            'customer_phone' => fake()->phoneNumber(),
+            'customer_address' => fake()->address(),
+            'items' => $items
+        ]);
+        $this->assertDatabaseCount('receipts', 2);
+        $this->assertDatabaseCount('receipt_item', 4);
+        $this->assertDatabaseCount('items', 2);
+
+        $values = $response->json()['items'];
+        foreach ($values as $value) {
+            $this->assertEquals($value['pivot']['price'], $items->first(fn ($val) => $val->id == $value['id'])->price);
+            $this->assertEquals($value['pivot']['price'], 1000);
+        }
+
+        foreach ($oldValues as $value) {
+            $this->assertNotEquals($value['pivot']['price'], $items->first(fn ($val) => $val->id == $value['id'])->price);
+            $this->assertEquals($value['pivot']['price'], 500);
+        }
     }
 
     public function test_retrieve_receipts()

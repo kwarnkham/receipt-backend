@@ -43,7 +43,28 @@ class PictureTest extends TestCase
 
     public function test_only_admin_can_save_picture()
     {
-        $response = $this->actingAs($this->user)->postJson('/api/picture', ['user_id' => $this->user->id, 'picture' => UploadedFile::fake()->image('test.jpg'), 'type' => 1]);
+        $response = $this->actingAs($this->user)->postJson('/api/picture', ['user_id' => $this->user->id, 'picture' => UploadedFile::fake()->image('test.jpg'), 'type' => 2]);
         $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+    }
+
+    public function test_post_picture_if_exists_replace()
+    {
+        $response = $this->actingAs($this->admin)->postJson('/api/picture', ['user_id' => $this->user->id, 'picture' => UploadedFile::fake()->image('test.jpg'), 'type' => 1]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount('pictures', 1);
+        $picture = Picture::find($response->json()['id']);
+        $response = Http::get($picture->url());
+        $this->assertTrue($response->ok());
+        $this->assertTrue(Storage::disk('s3')->delete($picture->name));
+
+        $response = $this->actingAs($this->admin)->postJson('/api/picture', ['user_id' => $this->user->id, 'picture' => UploadedFile::fake()->image('test.jpg'), 'type' => 1]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount('pictures', 1);
+        $picture = Picture::find($response->json()['id']);
+        $response = Http::get($picture->url());
+        $this->assertTrue($response->ok());
+        $this->assertTrue(Storage::disk('s3')->delete($picture->name));
     }
 }

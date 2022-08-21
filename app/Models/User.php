@@ -12,7 +12,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-
+    public function scopeFilter($query, $filters)
+    {
+        $query->when(
+            $filters['role'] ?? false,
+            fn ($q, $role) => $role == 'user' ? $q->doesntHave('roles') : $q->whereRelation('roles', 'name', $role)
+        );
+    }
     public function items()
     {
         return $this->hasMany(Item::class);
@@ -60,15 +66,5 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 }

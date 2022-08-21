@@ -25,7 +25,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function user(Request $request)
+    public function token(Request $request)
     {
         return response()->json($request->user());
     }

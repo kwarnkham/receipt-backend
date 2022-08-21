@@ -43,6 +43,7 @@ class ReceiptController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
+        abort_if($user->isAdmin(), ResponseStatus::UNAUTHORIZED->value);
         $data['user_id'] = $user->id;
         $receipt = Receipt::create($data);
         $items = [];

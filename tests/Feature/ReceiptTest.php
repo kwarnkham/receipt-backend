@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ResponseStatus;
 use App\Models\Item;
 use App\Models\Receipt;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -16,12 +18,15 @@ class ReceiptTest extends TestCase
 
     private $user;
     private $user2;
+    private $admin;
+
 
     public function setUp(): void
     {
         parent::setUp();
         $this->user = User::factory()->create();
         $this->user2 = User::factory()->create();
+        $this->admin = User::factory()->has(Role::factory(['name' => 'admin']))->create();
     }
 
     public function test_create_receipt()
@@ -213,5 +218,31 @@ class ReceiptTest extends TestCase
                 ->has('data', $receipt->count())
 
         );
+    }
+
+    public function test_admin_cannot_create_receipt()
+    {
+        $response = $this->actingAs($this->admin)->postJson('api/receipt', [
+            'date' => now(),
+            'customer_name' => fake()->name(),
+            'customer_phone' => fake()->phoneNumber(),
+            'customer_address' => fake()->address(),
+            'discount' => fake()->numberBetween(100, 200),
+            'deposit' => 1000,
+            'items' => [
+                [
+                    'name' => fake()->unique()->name(),
+                    'price' => 1000,
+                    'quantity' => 1,
+                ],
+                [
+                    'name' => fake()->unique()->name(),
+                    'price' => 2000,
+                    'quantity' => 1,
+                ]
+            ]
+        ]);
+
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
     }
 }

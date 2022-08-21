@@ -14,11 +14,12 @@ class ReceiptController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $receipts = Receipt::all();
+        $receipts = Receipt::of($request->user())->paginate($request->per_page ?? 10);
         return response()->json($receipts);
     }
 

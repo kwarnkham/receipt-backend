@@ -35,4 +35,9 @@ class Receipt extends Model
     {
         return explode("X", $code)[1] ?? false;
     }
+
+    public function scopeOf($query, User $user)
+    {
+        if (!$user->isAdmin()) $query->where('user_id', $user->id);
+    }
 }

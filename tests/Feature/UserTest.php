@@ -105,4 +105,19 @@ class UserTest extends TestCase
         $response->assertOk();
         $response->assertJson($this->user2->fresh()->toArray());
     }
+
+    public function test_update_user_info_mobile_is_unique()
+    {
+        $response = $this->actingAs($this->admin)->putJson('/api/user/' . $this->user2->id, [
+            'name' => 'updated name',
+            'mobile' => $this->user->mobile
+        ]);
+        $response->assertUnprocessable();
+
+        $response = $this->actingAs($this->admin)->putJson('/api/user/' . $this->user2->id, [
+            'name' => 'updated name',
+            'mobile' => $this->user2->mobile
+        ]);
+        $response->assertOk();
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Receipt;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class ReceiptTest extends TestCase
@@ -182,6 +183,35 @@ class ReceiptTest extends TestCase
 
         $response = $this->actingAs($this->user)->getJson('/api/receipt');
         $response->assertOk();
-        $response->assertJson($receipt->toArray());
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', $receipt->count())
+                ->has('data.0', fn ($json) =>
+                $json->where('id', $receipt[0]->id)
+                    ->where('customer_name', $receipt[0]->customer_name)->etc())
+        );
+    }
+
+    public function test_retrieve_receipts_only_owned()
+    {
+        $receipt = Receipt::factory(10)->create(['user_id' => $this->user->id]);
+        $response = $this->actingAs($this->user2)->getJson('/api/receipt');
+        $response->assertOk();
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', 0)
+
+        );
+
+        $response = $this->actingAs($this->user)->getJson('/api/receipt');
+        $response->assertOk();
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', $receipt->count())
+
+        );
     }
 }

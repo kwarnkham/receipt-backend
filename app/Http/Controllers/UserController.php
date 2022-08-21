@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -75,8 +76,8 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'name' => ['string'],
-            'mobile' => ['string']
+            'name' => ['string', 'required'],
+            'mobile' => ['string', 'required', Rule::unique('users', 'mobile')->ignore($user->id)]
         ]);
         $user->update($data);
         return response()->json($user->fresh());

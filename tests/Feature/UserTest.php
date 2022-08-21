@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\ResponseStatus;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,5 +78,21 @@ class UserTest extends TestCase
         );
 
         $response->assertStatus(200);
+    }
+
+    public function test_fetching_a_user()
+    {
+        $response = $this->actingAs($this->admin)->get('/api/user/' . $this->user->id);
+        $response->assertOk();
+        $response->assertJson($this->user->toArray());
+    }
+
+    public function test_only_admin_can_fetch()
+    {
+        $response = $this->actingAs($this->user)->get('/api/user/' . $this->user2->id);
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+
+        $response = $this->actingAs($this->user)->get('/api/user');
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
     }
 }

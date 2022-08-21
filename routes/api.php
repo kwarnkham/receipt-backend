@@ -39,4 +39,5 @@ Route::middleware(['auth:sanctum'])->controller(PictureController::class)->group
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(UserController::class)->group(function () {
     Route::get('user', 'index');
+    Route::get('user/{user}', 'show');
 });

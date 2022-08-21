@@ -27,7 +27,7 @@ class UserTest extends TestCase
     }
     public function test_fetching_users()
     {
-        $response = $this->actingAs($this->admin)->get('/api/user');
+        $response = $this->actingAs($this->admin)->getJson('/api/user');
 
         $response->assertJson(
             fn (AssertableJson $json) =>
@@ -41,7 +41,7 @@ class UserTest extends TestCase
 
     public function test_fetching_users_per_page()
     {
-        $response = $this->actingAs($this->admin)->get('/api/user?per_page=1');
+        $response = $this->actingAs($this->admin)->getJson('/api/user?per_page=1');
 
         $response->assertJson(
             fn (AssertableJson $json) =>
@@ -55,7 +55,7 @@ class UserTest extends TestCase
 
     public function test_fetching_user_excluding_admin()
     {
-        $response = $this->actingAs($this->admin)->get('/api/user?role=user');
+        $response = $this->actingAs($this->admin)->getJson('/api/user?role=user');
         $response->assertJson(
             fn (AssertableJson $json) =>
             $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
@@ -68,7 +68,7 @@ class UserTest extends TestCase
 
     public function test_fetching_admin()
     {
-        $response = $this->actingAs($this->admin)->get('/api/user?role=admin');
+        $response = $this->actingAs($this->admin)->getJson('/api/user?role=admin');
         $response->assertJson(
             fn (AssertableJson $json) =>
             $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
@@ -82,17 +82,27 @@ class UserTest extends TestCase
 
     public function test_fetching_a_user()
     {
-        $response = $this->actingAs($this->admin)->get('/api/user/' . $this->user->id);
+        $response = $this->actingAs($this->admin)->getJson('/api/user/' . $this->user->id);
         $response->assertOk();
         $response->assertJson($this->user->toArray());
     }
 
     public function test_only_admin_can_fetch()
     {
-        $response = $this->actingAs($this->user)->get('/api/user/' . $this->user2->id);
+        $response = $this->actingAs($this->user)->getJson('/api/user/' . $this->user2->id);
         $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
 
-        $response = $this->actingAs($this->user)->get('/api/user');
+        $response = $this->actingAs($this->user)->getJson('/api/user');
         $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+    }
+
+    public function test_update_user_info()
+    {
+        $response = $this->actingAs($this->admin)->putJson('/api/user/' . $this->user2->id, [
+            'name' => 'updated name',
+            'mobile' => '999'
+        ]);
+        $response->assertOk();
+        $response->assertJson($this->user2->fresh()->toArray());
     }
 }

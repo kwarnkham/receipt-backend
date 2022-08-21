@@ -56,15 +56,17 @@ class PictureTest extends TestCase
         $picture = Picture::find($response->json()['id']);
         $response = Http::get($picture->url());
         $this->assertTrue($response->ok());
-        $this->assertTrue(Storage::disk('s3')->delete($picture->name));
+
 
         $response = $this->actingAs($this->admin)->postJson('/api/picture', ['user_id' => $this->user->id, 'picture' => UploadedFile::fake()->image('test.jpg'), 'type' => 1]);
 
         $response->assertCreated();
         $this->assertDatabaseCount('pictures', 1);
-        $picture = Picture::find($response->json()['id']);
-        $response = Http::get($picture->url());
+        $picture2 = Picture::find($response->json()['id']);
+        $response = Http::get($picture2->url());
         $this->assertTrue($response->ok());
-        $this->assertTrue(Storage::disk('s3')->delete($picture->name));
+        $this->assertTrue(Storage::disk('s3')->delete($picture2->name));
+        $response = Http::get($picture->url());
+        $this->assertFalse($response->ok());
     }
 }

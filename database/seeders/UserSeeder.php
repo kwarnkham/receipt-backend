@@ -28,6 +28,12 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('0330'),
                 'created_at' => $time,
                 'updated_at' => $time
+            ],
+            [
+                'mobile' => '1234',
+                'password' => bcrypt('1234'),
+                'created_at' => $time,
+                'updated_at' => $time
             ]
         ]);
 

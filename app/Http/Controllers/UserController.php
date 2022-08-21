@@ -74,7 +74,12 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $data = $request->validate([
+            'name' => ['string'],
+            'mobile' => ['string']
+        ]);
+        $user->update($data);
+        return response()->json($user->fresh());
     }
 
     /**

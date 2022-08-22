@@ -53,14 +53,14 @@ class Receipt extends Model
         $query->when(
             $filters['customer_phone'] ?? false,
             function ($q, $customer_phone) {
-                $q->where('customer_phone', $customer_phone);
+                $q->where('customer_phone', 'like', '%' . $customer_phone . '%');
             }
         );
 
         $query->when(
             $filters['customer_name'] ?? false,
             function ($q, $customer_name) {
-                $q->where('customer_name', $customer_name);
+                $q->where('customer_name', 'like', '%' . $customer_name . '%');
             }
         );
 

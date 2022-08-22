@@ -50,7 +50,7 @@ class PaymentTest extends TestCase
         $this->assertDatabaseCount('user_payment', 1);
         $this->assertDatabaseHas('user_payment', $data);
         $data['created_at'] = $response->json()['payments'][0]['pivot']['created_at'];
-        $HTTP_RAW_POST_DATA['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
+        $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
         $response->assertJson(
             fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments')
                 ->has(

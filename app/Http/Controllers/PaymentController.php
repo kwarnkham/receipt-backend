@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ResponseStatus;
 use App\Http\Requests\StorepaymentRequest;
 use App\Http\Requests\UpdatepaymentRequest;
-use App\Models\payment;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -18,7 +18,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(Payment::all());
     }
 
     public function userPayment(Request $request)

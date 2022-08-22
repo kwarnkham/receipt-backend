@@ -26,6 +26,14 @@ class PaymentTest extends TestCase
         $this->admin = User::factory()->has(Role::factory(['name' => 'admin']))->create();
     }
 
+    public function test_fetch_payments()
+    {
+        $payments = Payment::factory(5)->create();
+        $response = $this->getJson('api/payment');
+        $response->assertOk();
+        $response->assertJson($payments->toArray());
+    }
+
     public function test_create_new_payment()
     {
 

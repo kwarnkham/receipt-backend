@@ -45,6 +45,10 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(UserController::class)-
     Route::put('user/{user}', 'update');
 });
 
+Route::controller(PaymentController::class)->group(function () {
+    Route::get('payment', 'index');
+});
+
 Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::class)->group(function () {
     Route::post('payment', 'store');
     Route::post('user/payment', 'userPayment');

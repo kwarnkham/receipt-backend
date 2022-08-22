@@ -52,4 +52,5 @@ Route::controller(PaymentController::class)->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::class)->group(function () {
     Route::post('payment', 'store');
     Route::post('user/payment', 'userPayment');
+    Route::put('user/{user}/payment/{payment}/number/{number}', 'updateUserPayment');
 });

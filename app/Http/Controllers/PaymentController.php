@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatepaymentRequest;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -33,6 +34,29 @@ class PaymentController extends Controller
         $user->payments()->attach($request->payment_id, ['account_name' => $request->account_name, 'number' => $request->number]);
 
         return response()->json($user->fresh());
+    }
+
+    public function updateUserPayment(Request $request, User $user, Payment $payment, $number)
+    {
+        abort_if($user->payments()->where([
+            'payment_id' => $payment->id,
+            'number' => $number
+        ])->doesntExist(), ResponseStatus::NOT_FOUND->value);
+        $data = $request->validate([
+            'account_name' => ['string'],
+            'number' => ['required']
+        ]);
+
+        DB::table('user_payment')->where([
+            'user_id' => $user->id,
+            'payment_id' => $payment->id,
+            'number' => $number
+        ])->update($data);
+
+        return response()->json($user->payments()->where([
+            'payment_id' => $payment->id,
+            'number' => $request->number
+        ])->first());
     }
 
     /**

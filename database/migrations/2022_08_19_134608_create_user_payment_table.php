@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('payment_id')->constrained();
             $table->string('account_name')->nullable();
             $table->string('number');
-            $table->unique(['user_id', 'payment_id']);
+            $table->unique(['user_id', 'payment_id', 'number']);
             $table->timestamps();
         });
     }

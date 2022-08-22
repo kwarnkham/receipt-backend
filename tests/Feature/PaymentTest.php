@@ -70,4 +70,32 @@ class PaymentTest extends TestCase
 
         );
     }
+
+    public function test_apply_payment_exclude_account_name()
+    {
+        $payment = Payment::factory()->create();
+        $number = fake()->randomNumber(5);
+        $data = [
+            'user_id' => $this->user->id,
+            'payment_id' => $payment->id,
+            'number' => (string)$number,
+        ];
+        $response = $this->actingAs($this->admin)->postJson('api/user/payment', $data);
+        $response->assertOk();
+        $this->assertDatabaseCount('user_payment', 1);
+        $this->assertDatabaseHas('user_payment', $data);
+        $data['created_at'] = $response->json()['payments'][0]['pivot']['created_at'];
+        $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
+        $data['account_name'] = null;
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments')
+                ->has(
+                    'payments.0',
+                    fn (AssertableJson $json) => $json->where('id', $payment->id)
+                        ->where('pivot', $data)
+                        ->etc()
+                )
+
+        );
+    }
 }

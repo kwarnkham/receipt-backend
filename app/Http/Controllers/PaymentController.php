@@ -26,7 +26,7 @@ class PaymentController extends Controller
         $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'payment_id' => ['required', 'exists:payments,id'],
-            'account_name' => ['required'],
+            'account_name' => ['string'],
             'number' => ['required']
         ]);
         $user = User::find($request->user_id);

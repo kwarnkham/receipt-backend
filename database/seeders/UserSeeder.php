@@ -18,12 +18,14 @@ class UserSeeder extends Seeder
         $time = now();
         DB::table('users')->insert([
             [
+                'name' => 'admin',
                 'mobile' => '911',
                 'password' => bcrypt('0330'),
                 'created_at' => $time,
                 'updated_at' => $time
             ],
             [
+                'name' => 'admin2',
                 'mobile' => '922',
                 'password' => bcrypt('0330'),
                 'created_at' => $time,

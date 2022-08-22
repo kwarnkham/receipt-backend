@@ -27,7 +27,7 @@ class PaymentController extends Controller
         $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'payment_id' => ['required', 'exists:payments,id'],
-            'account_name' => ['string'],
+            'account_name' => ['nullable'],
             'number' => ['required']
         ]);
         $user = User::find($request->user_id);
@@ -43,7 +43,7 @@ class PaymentController extends Controller
             'number' => $number
         ])->doesntExist(), ResponseStatus::NOT_FOUND->value);
         $data = $request->validate([
-            'account_name' => ['string'],
+            'account_name' => ['nullable'],
             'number' => ['required']
         ]);
 

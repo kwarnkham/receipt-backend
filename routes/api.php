@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PictureController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\UserController;
@@ -42,4 +43,9 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(UserController::class)-
     Route::get('user', 'index');
     Route::get('user/{user}', 'show');
     Route::put('user/{user}', 'update');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::class)->group(function () {
+    Route::post('payment', 'store');
+    Route::post('user/payment', 'userPayment');
 });

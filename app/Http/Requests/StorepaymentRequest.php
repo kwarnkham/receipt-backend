@@ -13,7 +13,7 @@ class StorepaymentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return $this->user()->isAdmin();
     }
 
     /**
@@ -24,7 +24,8 @@ class StorepaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['required', 'unique:payments,name'],
+            'type' => ['required', 'numeric']
         ];
     }
 }

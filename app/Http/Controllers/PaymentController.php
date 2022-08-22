@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResponseStatus;
 use App\Http\Requests\StorepaymentRequest;
 use App\Http\Requests\UpdatepaymentRequest;
 use App\Models\payment;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -16,6 +19,20 @@ class PaymentController extends Controller
     public function index()
     {
         //
+    }
+
+    public function userPayment(Request $request)
+    {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'payment_id' => ['required', 'exists:payments,id'],
+            'account_name' => ['required'],
+            'number' => ['required']
+        ]);
+        $user = User::find($request->user_id);
+        $user->payments()->attach($request->payment_id, ['account_name' => $request->account_name, 'number' => $request->number]);
+
+        return response()->json($user->fresh());
     }
 
     /**
@@ -36,7 +53,9 @@ class PaymentController extends Controller
      */
     public function store(StorepaymentRequest $request)
     {
-        //
+        $data = $request->validated();
+        $payment = Payment::create($data);
+        return response()->json($payment, ResponseStatus::CREATED->value);
     }
 
     /**

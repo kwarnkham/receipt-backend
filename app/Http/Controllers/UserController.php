@@ -20,7 +20,7 @@ class UserController extends Controller
             'role' => ['in:user,admin'],
         ]);
         User::filter(['role' => 'user'])->paginate();
-        return response()->json(User::filter($request->only(['role']))->paginate($request->per_page ?? 10));
+        return response()->json(User::filter($request->only(['role', 'name', 'mobile']))->paginate($request->per_page ?? 10));
     }
 
     /**

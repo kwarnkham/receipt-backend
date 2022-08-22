@@ -39,6 +39,34 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_fetching_users_filtered_by_name()
+    {
+        $response = $this->actingAs($this->admin)->getJson('/api/user?' . http_build_query(['name' => $this->user->name]));
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', User::where('name', $this->user->name)->count())
+                ->has('data.0', fn ($json) => $json->where('id', $this->user->id)
+                    ->where('name', $this->user->name)->where('mobile', $this->user->mobile)->etc())
+        );
+        $response->assertStatus(200);
+    }
+
+    public function test_fetching_users_filtered_by_mobile()
+    {
+        $response = $this->actingAs($this->admin)->getJson('/api/user?' . http_build_query(['mobile' => $this->user->mobile]));
+
+        $response->assertJson(
+            fn (AssertableJson $json) =>
+            $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', 1)
+                ->has('data.0', fn ($json) => $json->where('id', $this->user->id)
+                    ->where('name', $this->user->name)->where('mobile', $this->user->mobile)->etc())
+        );
+        $response->assertStatus(200);
+    }
+
     public function test_fetching_users_per_page()
     {
         $response = $this->actingAs($this->admin)->getJson('/api/user?per_page=1');

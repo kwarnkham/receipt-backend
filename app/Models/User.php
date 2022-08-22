@@ -18,6 +18,16 @@ class User extends Authenticatable
             $filters['role'] ?? false,
             fn ($q, $role) => $role == 'user' ? $q->doesntHave('roles') : $q->whereRelation('roles', 'name', $role)
         );
+
+        $query->when(
+            $filters['name'] ?? false,
+            fn ($q, $name) => $q->where('name', $name)
+        );
+
+        $query->when(
+            $filters['mobile'] ?? false,
+            fn ($q, $mobile) => $q->where('mobile', $mobile)
+        );
     }
     public function items()
     {

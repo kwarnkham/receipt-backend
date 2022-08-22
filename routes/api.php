@@ -53,4 +53,5 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::clas
     Route::post('payment', 'store');
     Route::post('user/payment', 'userPayment');
     Route::put('user/{user}/payment/{payment}/number/{number}', 'updateUserPayment');
+    Route::delete('user/{user}/payment/{payment}/number/{number}', 'deleteUserPayment');
 });

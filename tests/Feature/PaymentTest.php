@@ -152,4 +152,24 @@ class PaymentTest extends TestCase
 
         );
     }
+
+    public function test_delete_payment_info_of_a_user()
+    {
+        $payment = Payment::factory()->create();
+        $account_name = $this->user->name . ' account name';
+        $number = (string) fake()->randomNumber(5);
+        $data = [
+            'user_id' => $this->user->id,
+            'payment_id' => $payment->id,
+            'account_name' => $account_name,
+            'number' => $number
+        ];
+        $response = $this->actingAs($this->admin)->postJson('api/user/payment', $data);
+        $response->assertOk();
+
+        $data = ['account_name' => 'updated name', 'number' => 'updated number'];
+        $response = $this->actingAs($this->admin)->deleteJson('api/user/' . $this->user->id . '/payment/' . $payment->id . '/number/' . $number);
+        $response->assertOk();
+        $this->assertDatabaseCount('user_payment', 0);
+    }
 }

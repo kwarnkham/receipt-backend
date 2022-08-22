@@ -59,6 +59,23 @@ class PaymentController extends Controller
         ])->first());
     }
 
+    public function deleteUserPayment(User $user, Payment $payment, $number)
+    {
+        abort_if($user->payments()->where([
+            'payment_id' => $payment->id,
+            'number' => $number
+        ])->doesntExist(), ResponseStatus::NOT_FOUND->value);
+
+
+        DB::table('user_payment')->where([
+            'user_id' => $user->id,
+            'payment_id' => $payment->id,
+            'number' => $number
+        ])->delete();
+
+        return response()->json('ok');
+    }
+
     /**
      * Show the form for creating a new resource.
      *

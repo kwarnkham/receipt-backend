@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_name');
-            $table->string('customer_phone');
+            $table->string('customer_name')->index();
+            $table->string('customer_phone')->index();
             $table->string('customer_address');
-            $table->date('date');
+            $table->date('date')->index();
             $table->double('deposit')->nullable();
             $table->double('discount')->nullable();
             $table->foreignId('user_id')->constrained();

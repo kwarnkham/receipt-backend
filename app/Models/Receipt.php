@@ -40,4 +40,40 @@ class Receipt extends Model
     {
         if (!$user->isAdmin()) $query->where('user_id', $user->id);
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when(
+            $filters['order_in'] ?? false,
+            function ($q, $order_in) {
+                $q->orderBy('id', $order_in);
+            }
+        );
+
+        $query->when(
+            $filters['customer_phone'] ?? false,
+            function ($q, $customer_phone) {
+                $q->where('customer_phone', $customer_phone);
+            }
+        );
+
+        $query->when(
+            $filters['customer_name'] ?? false,
+            function ($q, $customer_name) {
+                $q->where('customer_name', $customer_name);
+            }
+        );
+
+        $query->when(
+            $filters['date'] ?? false,
+            function ($q, $date) {
+                $q->whereDate('date', $date);
+            }
+        );
+
+        $query->when($filters['code'] ?? false, function ($q, $code) {
+            $id = static::codeToId($code);
+            $q->where('id', $id);
+        });
+    }
 }

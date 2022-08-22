@@ -19,7 +19,18 @@ class ReceiptController extends Controller
      */
     public function index(Request $request)
     {
-        $receipts = Receipt::of($request->user())->paginate($request->per_page ?? 10);
+        $request->validate([
+            'order_in' => ['in:desc,asc'],
+            'customer_phone' => ['string'],
+            'customer_name' => ['string'],
+            'date' => ['date'],
+            'code' => ['']
+            // 'code' => [function ($attribute, $value, $fail) {
+            //     $order = Receipt::find(Receipt::codeToId($value));
+            //     if (!$order || $value != $order->code) $fail('The ' . $attribute . ' is invalid.');
+            // },]
+        ]);
+        $receipts = Receipt::of($request->user())->filter($request->only(['order_in', 'customer_phone', 'customer_name', 'date', 'code']))->paginate($request->per_page ?? 10);
         return response()->json($receipts);
     }
 

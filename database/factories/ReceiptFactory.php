@@ -18,9 +18,9 @@ class ReceiptFactory extends Factory
     {
         return [
             'customer_name' => fake()->name(),
-            'customer_phone' => fake()->phoneNumber(),
+            'customer_phone' => (string)fake()->randomNumber(9),
             'customer_address' => fake()->address(),
-            'date' => now()
+            'date' => now()->toDateString()
         ];
     }
 }

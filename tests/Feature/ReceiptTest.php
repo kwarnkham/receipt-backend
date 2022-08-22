@@ -245,4 +245,165 @@ class ReceiptTest extends TestCase
 
         $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
     }
+
+    public function test_fetch_receipt_in_assigned_order()
+    {
+
+        $receipts = Receipt::factory(10)->create(['user_id' => $this->user->id]);
+
+        $response = $this->actingAs($this->user)->getJson('api/receipt?order_in=desc');
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', 10)
+                ->has('data.0', fn ($json) => $json->where('id', $receipts->last()->id)->etc())
+        );
+
+        $response = $this->actingAs($this->user)->getJson('api/receipt?order_in=asc');
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', 10)
+                ->has('data.0', fn ($json) => $json->where('id', $receipts->first()->id)->etc())
+        );
+    }
+
+    public function test_fetch_receipt_per_page()
+    {
+
+        Receipt::factory(30)->create(['user_id' => $this->user->id]);
+
+        $per_page = 10;
+        $response = $this->actingAs($this->user)->getJson('api/receipt?per_page=' . $per_page);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', $per_page)
+        );
+
+        $per_page = 30;
+        $response = $this->actingAs($this->user)->getJson('api/receipt?per_page=' . $per_page);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data', $per_page)
+        );
+    }
+
+    public function test_fetch_receipt_filtered_by_customer_phone()
+    {
+
+        $receipts = Receipt::factory(10)->create(['user_id' => $this->user->id,]);
+
+        $customer_phone = $receipts->last()->customer_phone;
+        $response = $this->actingAs($this->user)->getJson('api/receipt?customer_phone=' . $customer_phone);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data.0', fn ($json) => $json->where('customer_phone', $customer_phone)->etc())
+        );
+    }
+
+    public function test_fetch_receipt_filtered_by_customer_name()
+    {
+
+        $receipts = Receipt::factory(10)->create(['user_id' => $this->user->id,]);
+
+        $customer_name = $receipts->last()->customer_name;
+        $response = $this->actingAs($this->user)->getJson('api/receipt?customer_name=' . $customer_name);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data.0', fn ($json) => $json->where('customer_name', $customer_name)->etc())
+        );
+
+        $customer_name = "I do not exist in db";
+        $response = $this->actingAs($this->user)->getJson('api/receipt?customer_name=' . $customer_name);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+        );
+    }
+
+    public function test_fetch_receipt_filtered_by_date()
+    {
+
+        $receipts = Receipt::factory(10)->create(['user_id' => $this->user->id,]);
+
+        $date = $receipts->last()->date;
+        $response = $this->actingAs($this->user)->getJson('api/receipt?date=' . $date);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data.0', fn ($json) => $json->where('date', $date)->etc())
+        );
+
+
+        $date = "1994-08-22";
+        $response = $this->actingAs($this->user)->getJson('api/receipt?date=' . $date);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+        );
+    }
+
+    public function test_fetch_receipt_filtered_by_code()
+    {
+
+        $receipts = Receipt::factory(10)->create(['user_id' => $this->user->id,]);
+
+        $code = $receipts->last()->code;
+
+        $response = $this->actingAs($this->user)->getJson('api/receipt?' . http_build_query(['code' => $code]));
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+                ->has('data.0', fn ($json) => $json->where('id', (int) Receipt::codeToId($code))->etc())
+        );
+
+
+        $code = "invalidcode";
+        $response = $this->actingAs($this->user)->getJson('api/receipt?code=' . $code);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+        );
+    }
+
+    public function test_fetch_receipt_filtered_by_not_existed_customer_phone()
+    {
+
+        Receipt::factory(10)->create(['user_id' => $this->user->id,]);
+
+        $customer_phone = 'not_existed';
+        $response = $this->actingAs($this->user)->getJson('api/receipt?customer_phone=' . $customer_phone);
+
+        $response->assertOk();
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
+        );
+    }
 }

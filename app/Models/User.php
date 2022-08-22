@@ -21,12 +21,12 @@ class User extends Authenticatable
 
         $query->when(
             $filters['name'] ?? false,
-            fn ($q, $name) => $q->where('name', $name)
+            fn ($q, $name) => $q->where('name', 'like', '%' . $name . '%')
         );
 
         $query->when(
             $filters['mobile'] ?? false,
-            fn ($q, $mobile) => $q->where('mobile', $mobile)
+            fn ($q, $mobile) => $q->where('mobile', 'like', '%' . $mobile . '%')
         );
     }
     public function items()

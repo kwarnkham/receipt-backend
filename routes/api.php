@@ -31,6 +31,7 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::middleware('auth:sanctum')->controller(AuthController::class)->group(function () {
     Route::get('token', 'token');
+    Route::post('password', 'changePassword');
 });
 
 Route::middleware(['auth:sanctum'])->controller(PictureController::class)->group(function () {

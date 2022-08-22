@@ -25,6 +25,20 @@ class AuthController extends Controller
         ]);
     }
 
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required'],
+            'new_password' => ['required', 'confirmed'],
+        ]);
+        $user = $request->user();
+        abort_unless(Hash::check($request->password, $user->password), ResponseStatus::UNAUTHORIZED);
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+        return response()->json("ok");
+    }
+
     public function token(Request $request)
     {
         return response()->json($request->user());

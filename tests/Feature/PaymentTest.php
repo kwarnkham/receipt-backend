@@ -64,7 +64,6 @@ class PaymentTest extends TestCase
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)
-                        ->where('pivot', $data)
                         ->etc()
                 )
 
@@ -146,7 +145,6 @@ class PaymentTest extends TestCase
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)
-                        ->where('pivot', $data)
                         ->etc()
                 )
 

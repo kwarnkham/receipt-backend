@@ -38,7 +38,7 @@ class PictureTest extends TestCase
         $picture = Picture::find($response->json()['id']);
         $response = Http::get($picture->url());
         $this->assertTrue($response->ok());
-        $this->assertTrue(Storage::disk('s3')->delete($picture->name));
+        $this->assertTrue($picture->deleteFromCloud());
     }
 
     public function test_only_admin_can_save_picture()
@@ -65,7 +65,7 @@ class PictureTest extends TestCase
         $picture2 = Picture::find($response->json()['id']);
         $response = Http::get($picture2->url());
         $this->assertTrue($response->ok());
-        $this->assertTrue(Storage::disk('s3')->delete($picture2->name));
+        $this->assertTrue($picture2->deleteFromCloud());
         $response = Http::get($picture->url());
         $this->assertFalse($response->ok());
     }

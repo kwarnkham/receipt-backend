@@ -25,6 +25,37 @@ class UserTest extends TestCase
         $this->user2 = User::factory()->create();
         $this->admin = User::factory()->has(Role::factory(['name' => 'admin']))->create();
     }
+
+    public function test_create_user()
+    {
+        $data =  [
+            'mobile' => '09888',
+            'name' => 'user name',
+        ];
+        $response = $this->actingAs($this->admin)->postJson('api/user', $data);
+        $response->assertCreated();
+        $this->assertDatabaseCount('users', 4);
+        $response->assertJson(fn (AssertableJson $json) => $json->hasAll([
+            'id', 'name', 'mobile', 'updated_at', 'created_at',
+        ])->where('name', $data['name'])->where('mobile', $data['mobile']));
+    }
+
+    public function test_only_admin_can_create_user()
+    {
+        $data =  [
+            'mobile' => '09888',
+            'name' => 'user name',
+        ];
+        $response = $this->actingAs($this->user)->postJson('api/user', $data);
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+        $response = $this->actingAs($this->admin)->postJson('api/user', $data);
+        $response->assertCreated();
+        $this->assertDatabaseCount('users', 4);
+        $response->assertJson(fn (AssertableJson $json) => $json->hasAll([
+            'id', 'name', 'mobile', 'updated_at', 'created_at',
+        ]));
+    }
+
     public function test_fetching_users()
     {
         $response = $this->actingAs($this->admin)->getJson('/api/user');

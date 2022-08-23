@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ResponseStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -41,7 +42,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => ['required'],
+            'mobile' => ['required', 'unique:users,mobile'],
+        ]);
+        $data['password'] = bcrypt('password');
+        $user = User::create($data);
+        return response()->json($user, ResponseStatus::CREATED->value);
     }
 
     /**

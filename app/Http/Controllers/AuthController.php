@@ -32,7 +32,7 @@ class AuthController extends Controller
             'new_password' => ['required', 'confirmed'],
         ]);
         $user = $request->user();
-        abort_unless(Hash::check($request->password, $user->password), ResponseStatus::UNAUTHORIZED);
+        abort_unless(Hash::check($request->password, $user->password), ResponseStatus::UNAUTHORIZED->value);
 
         $user->password = bcrypt($request->new_password);
         $user->save();

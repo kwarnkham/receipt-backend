@@ -19,11 +19,13 @@ class PaymentSeeder extends Seeder
         DB::table('payments')->insert([
             [
                 'name' => 'KBZPay',
+                'type' => 1,
                 'created_at' => $time,
                 'updated_at' => $time
             ],
             [
                 'name' => 'WavePay',
+                'type' => 2,
                 'created_at' => $time,
                 'updated_at' => $time
             ]

@@ -11,6 +11,6 @@ class Payment extends Model
     protected $guarded = ['id'];
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_payment')->withPivot(['account_name', 'number'])->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_payment')->withPivot(['account_name', 'number', 'id'])->withTimestamps();
     }
 }

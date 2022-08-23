@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function payments()
     {
-        return $this->belongsToMany(Payment::class, 'user_payment')->withPivot(['account_name', 'number'])->withTimestamps();
+        return $this->belongsToMany(Payment::class, 'user_payment')->withPivot(['account_name', 'number', 'id'])->withTimestamps();
     }
 
     public function pictures()

@@ -143,7 +143,17 @@ class UserTest extends TestCase
     {
         $response = $this->actingAs($this->admin)->getJson('/api/user/' . $this->user->id);
         $response->assertOk();
-        $response->assertJson($this->user->toArray());
+        $response->assertExactJson($this->user->fresh()->toArray());
+        $response->assertJson(['name' => $this->user->name]);
+        $response->assertJsonPath('role.0', null);
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->where('id', $this->user->id)
+                ->has('id')
+                ->hasAll(['id', 'name'])
+                ->hasAny('data', 'name')
+                ->missing('password')
+                ->etc()
+        );
     }
 
     public function test_only_admin_can_fetch()

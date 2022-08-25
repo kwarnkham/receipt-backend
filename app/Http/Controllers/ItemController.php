@@ -6,6 +6,7 @@ use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ItemController extends Controller
 {
@@ -22,7 +23,11 @@ class ItemController extends Controller
     public function getKnownItems(Request $request)
     {
         $user = $request->user();
-        $items = Item::whereBelongsTo($user)->get(['name', 'price']);
+        $items = Cache::rememberForever(
+            $user->id . "knownItems",
+            fn () => Item::whereBelongsTo($user)->get(['name', 'price'])->unique('name')
+        );
+
         return response()->json($items);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PictureController;
 use App\Http\Controllers\ReceiptController;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->controller(ReceiptController::class)->group(function () {
     Route::post('receipt', 'store');
     Route::get('receipt', 'index');
+    Route::get('customer/known', 'getKnownCustomers');
     Route::get('receipt/{receipt}', 'show');
 });
 
@@ -55,4 +57,8 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::clas
     Route::post('user/payment', 'userPayment');
     Route::put('user/{user}/payment/{payment}/number/{number}', 'updateUserPayment');
     Route::delete('user/{user}/payment/{payment}/number/{number}', 'deleteUserPayment');
+});
+
+Route::middleware(['auth:sanctum'])->controller(ItemController::class)->group(function () {
+    Route::get('item/known', 'getKnownItems');
 });

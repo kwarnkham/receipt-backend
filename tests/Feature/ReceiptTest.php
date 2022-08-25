@@ -406,4 +406,22 @@ class ReceiptTest extends TestCase
             fn (AssertableJson $json) => $json->hasAll('current_page', 'data', 'first_page_url', 'from', 'next_page_url', 'path', 'per_page', 'prev_page_url', 'to', 'last_page', 'last_page_url', 'links', 'total')
         );
     }
+
+    public function test_get_known_customer()
+    {
+        $count = 10;
+        $receipts = Receipt::factory($count)->create([
+            'customer_phone' => '000',
+            'user_id' => $this->user->id
+        ]);
+        Receipt::factory($count)->create([
+            'user_id' => $this->user2->id
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson('api/customer/known');
+        // dump(collect($response->json())->unique('mobile'));
+        // dump($response->json());
+        $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
+        $response->assertStatus(200);
+    }
 }

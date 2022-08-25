@@ -34,6 +34,17 @@ class ReceiptController extends Controller
         return response()->json($receipts);
     }
 
+    public function getKnownCustomers(Request $request)
+    {
+        $user = $request->user();
+        $customers = Receipt::whereBelongsTo($user)->orderBy('id', 'desc')->get(['customer_name', 'customer_address', 'customer_phone']);
+        return response()->json($customers->map(fn ($value) => [
+            'name' => $value->customer_name,
+            'mobile' => $value->customer_phone,
+            'address' => $value->customer_address,
+        ])->unique('mobile'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
+use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
@@ -16,6 +17,13 @@ class ItemController extends Controller
     public function index()
     {
         //
+    }
+
+    public function getKnownItems(Request $request)
+    {
+        $user = $request->user();
+        $items = Item::whereBelongsTo($user)->get(['name', 'price']);
+        return response()->json($items);
     }
 
     /**

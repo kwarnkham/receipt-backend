@@ -28,6 +28,12 @@ class PaymentSeeder extends Seeder
                 'type' => 2,
                 'created_at' => $time,
                 'updated_at' => $time
+            ],
+            [
+                'name' => 'PayNow',
+                'type' => 3,
+                'created_at' => $time,
+                'updated_at' => $time
             ]
         ]);
     }

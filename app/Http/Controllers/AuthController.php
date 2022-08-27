@@ -17,6 +17,7 @@ class AuthController extends Controller
         ]);
         $user = User::where('mobile', $data['mobile'])->first();
         abort_unless(Hash::check($data['password'], $user->password), ResponseStatus::UNAUTHENTICATED->value);
+        abort_unless($user->latestSubscription && $user->latestSubscription->active, ResponseStatus::UNAUTHORIZED->value, 'No active subscription');
         $user->tokens()->delete();
         $token = $user->createToken('login');
         return response()->json([

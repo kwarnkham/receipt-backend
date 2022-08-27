@@ -98,9 +98,4 @@ class SubscriptionTest extends TestCase
 
         $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
     }
-
-    // public function test_only_user_with_active_subscription_can_login()
-    // {
-    //     # code...
-    // }
 }

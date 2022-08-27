@@ -17,7 +17,9 @@ class SubscriptionFactory extends Factory
     public function definition()
     {
         return [
-            'duration' => 30
+            'day' => 30,
+            'duration' => 30,
+            'price' => 7000
         ];
     }
 }

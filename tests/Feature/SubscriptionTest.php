@@ -29,7 +29,8 @@ class SubscriptionTest extends TestCase
     {
         $data = [
             'user_id' => $this->user->id,
-            'duration' => 30
+            'day' => 30,
+            'price' => 7000,
         ];
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
 
@@ -41,7 +42,8 @@ class SubscriptionTest extends TestCase
     {
         $data = [
             'user_id' => $this->user->id,
-            'duration' => 30
+            'day' => 30,
+            'price' => 7000,
         ];
         $response = $this->actingAs($this->user)->postJson('api/subscription', $data);
 
@@ -56,7 +58,8 @@ class SubscriptionTest extends TestCase
     {
         $data = [
             'user_id' => $this->user->id,
-            'duration' => 30
+            'day' => 30,
+            'price' => 7000,
         ];
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
 
@@ -65,8 +68,7 @@ class SubscriptionTest extends TestCase
 
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
 
-        $data['duration'] *= 2;
-
+        $data['duration'] = $data['day'] * 2;
         $response->assertCreated();
         $response->assertJson($data);
 
@@ -76,7 +78,8 @@ class SubscriptionTest extends TestCase
 
         $data = [
             'user_id' => $this->user->id,
-            'duration' => 30
+            'day' => 30,
+            'price' => 7000
         ];
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
         $response->assertJson($data);
@@ -85,13 +88,19 @@ class SubscriptionTest extends TestCase
 
         $data = [
             'user_id' => $this->user->id,
-            'duration' => 30
+            'day' => 30,
+            'price' => 7000
         ];
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
-        $data['duration'] += 5;
+        $data['duration'] = $data['day'] + 5;
         $response->assertJson($data);
         $this->user = $this->user->fresh();
 
         $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
     }
+
+    // public function test_only_user_with_active_subscription_can_login()
+    // {
+    //     # code...
+    // }
 }

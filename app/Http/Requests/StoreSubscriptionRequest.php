@@ -24,7 +24,8 @@ class StoreSubscriptionRequest extends FormRequest
     public function rules()
     {
         return [
-            'duration' => ['required', 'numeric'],
+            'price' => ['required', 'numeric'],
+            'day' => ['required', 'numeric'],
             'user_id' => ['required', 'exists:users,id']
         ];
     }

@@ -73,6 +73,28 @@ class AuthTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_admin_can_login_without_subscription()
+    {
+        $user = User::factory()->create();
+        $user->roles()->attach(1);
+        $response = $this->postJson('/api/login', [
+            'mobile' => $user->mobile,
+            'password' => 'password'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertDatabaseCount('personal_access_tokens', 1);
+        $this->assertTrue($user->id == PersonalAccessToken::first()->tokenable_id);
+        $response->assertJson(
+            fn (AssertableJson $json) => $json->hasAll(['token', 'user'])
+        );
+        $token = $response->json()['token'];
+        $response = $this->getJson('/api/token', [
+            "Authorization" => "Bearer " . $token
+        ]);
+        $response->assertOk();
+    }
+
     public function test_limit_login_when_subscription_expired_or_not_active()
     {
         $duration = 30;

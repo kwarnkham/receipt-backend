@@ -116,6 +116,9 @@ class AuthTest extends TestCase
             'new_password_confirmation' => $newPassword
         ]);
         $response->assertOk();
+        Subscription::factory()->create([
+            'user_id' => $this->user->id
+        ]);
         $response = $this->postJson('api/login', [
             'mobile' => $this->user->mobile,
             'password' => $newPassword

@@ -23,10 +23,13 @@ class ItemController extends Controller
     public function getKnownItems(Request $request)
     {
         $user = $request->user();
-        $items = Cache::rememberForever(
-            $user->id . "knownItems",
-            fn () => Item::whereBelongsTo($user)->get(['name', 'price'])->unique('name')
-        );
+
+        // $items = Cache::rememberForever(
+        //     $user->id . "knownItems",
+        //     fn () => Item::whereBelongsTo($user)->get(['name', 'price'])->unique('name')
+        // );
+
+        $items = Item::whereBelongsTo($user)->get(['name', 'price'])->unique('name');
 
         return response()->json($items);
     }

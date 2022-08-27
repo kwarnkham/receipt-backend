@@ -17,9 +17,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call(function () {
-            Cache::flush();
-        })->timezone('Asia/Yangon')->at('03:00');
+        // $schedule->call(function () {
+        //     Cache::clear();
+        // })->timezone('Asia/Yangon')->at('03:00');
     }
 
     /**

@@ -39,7 +39,8 @@ class ReceiptController extends Controller
     {
         $user = $request->user();
 
-        $customers = Cache::rememberForever($user->id . "knownUsers", fn () => Receipt::whereBelongsTo($user)->orderBy('id', 'desc')->get(['customer_name', 'customer_address', 'customer_phone']));
+        // $customers = Cache::rememberForever($user->id . "knownUsers", fn () => Receipt::whereBelongsTo($user)->orderBy('id', 'desc')->get(['customer_name', 'customer_address', 'customer_phone']));
+        $customers = Receipt::whereBelongsTo($user)->orderBy('id', 'desc')->get(['customer_name', 'customer_address', 'customer_phone']);
         return response()->json($customers->map(fn ($value) => [
             'name' => $value->customer_name,
             'mobile' => $value->customer_phone,

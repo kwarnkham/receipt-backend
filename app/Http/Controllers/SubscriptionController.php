@@ -42,7 +42,7 @@ class SubscriptionController extends Controller
         $user = User::find($data['user_id']);
 
         $existing = $user->latestSubscription;
-        if ($existing) $data['duration'] += $existing->remainingDuration();
+        if ($existing && $existing->remainingDuration() >= 1) $data['duration'] += $existing->remainingDuration();
         $subscription = Subscription::create($data);
 
         return response()->json($subscription, ResponseStatus::CREATED->value);

@@ -20,21 +20,19 @@ class Subscription extends Model
     public function expired(): Attribute
     {
         return Attribute::make(
-            fn () => $this->created_at->diffInDays(now()) > 30
+            fn () => $this->created_at->startOfDay()->diffInDays(today()) > 30
         );
     }
 
     public function active(): Attribute
     {
         return Attribute::make(
-            fn () => $this->created_at->diffInDays(now()) <= 30
+            fn () => $this->created_at->startOfDay()->diffInDays(today()) <= 30
         );
     }
 
     public function remainingDuration()
     {
-
-
-        return $this->duration - $this->created_at->diffInDays(today());
+        return $this->duration - $this->created_at->startOfDay()->diffInDays(today());
     }
 }

@@ -65,9 +65,32 @@ class SubscriptionTest extends TestCase
 
         $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
 
-        $response->assertCreated();
         $data['duration'] *= 2;
+
+        $response->assertCreated();
         $response->assertJson($data);
+
+        $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
+
+        $this->travel(60)->days();
+
+        $data = [
+            'user_id' => $this->user->id,
+            'duration' => 30
+        ];
+        $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
+        $response->assertJson($data);
+
+        $this->travel(25)->days();
+
+        $data = [
+            'user_id' => $this->user->id,
+            'duration' => 30
+        ];
+        $response = $this->actingAs($this->admin)->postJson('api/subscription', $data);
+        $data['duration'] += 5;
+        $response->assertJson($data);
+        $this->user = $this->user->fresh();
 
         $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
     }

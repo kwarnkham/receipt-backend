@@ -42,29 +42,29 @@ class ItemTest extends TestCase
     }
 
 
-    public function test_get_known_items_from_cache()
-    {
-        $count = 10;
-        Item::factory($count)->create([
-            'user_id' => $this->user->id
-        ]);
+    // public function test_get_known_items_from_cache()
+    // {
+    //     $count = 10;
+    //     Item::factory($count)->create([
+    //         'user_id' => $this->user->id
+    //     ]);
 
-        $response = $this->actingAs($this->user)->getJson('api/item/known');
-        $response->assertJson(fn (AssertableJson $json) => $json->has($count)->first(fn ($json) => $json->hasAll('name', 'price')));
-        $key = $this->user->id . "knownItems";
-        $this->assertTrue(Cache::has($key));
+    //     $response = $this->actingAs($this->user)->getJson('api/item/known');
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($count)->first(fn ($json) => $json->hasAll('name', 'price')));
+    //     $key = $this->user->id . "knownItems";
+    //     $this->assertTrue(Cache::has($key));
 
-        Item::factory($count)->create([
-            'user_id' => $this->user->id
-        ]);
+    //     Item::factory($count)->create([
+    //         'user_id' => $this->user->id
+    //     ]);
 
-        $response = $this->actingAs($this->user)->getJson('api/item/known');
-        $response->assertJson(fn (AssertableJson $json) => $json->has($count)->first(fn ($json) => $json->hasAll('name', 'price')));
+    //     $response = $this->actingAs($this->user)->getJson('api/item/known');
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($count)->first(fn ($json) => $json->hasAll('name', 'price')));
 
-        Cache::forget($key);
-        $this->assertFalse(Cache::has($key));
-        $response = $this->actingAs($this->user)->getJson('api/item/known');
-        $response->assertJson(fn (AssertableJson $json) => $json->has($count + $count)->first(fn ($json) => $json->hasAll('name', 'price')));
-        $this->assertTrue(Cache::has($key));
-    }
+    //     Cache::forget($key);
+    //     $this->assertFalse(Cache::has($key));
+    //     $response = $this->actingAs($this->user)->getJson('api/item/known');
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($count + $count)->first(fn ($json) => $json->hasAll('name', 'price')));
+    //     $this->assertTrue(Cache::has($key));
+    // }
 }

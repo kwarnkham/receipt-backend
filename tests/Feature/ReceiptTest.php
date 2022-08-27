@@ -443,34 +443,34 @@ class ReceiptTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_get_known_customer_from_cache()
-    {
-        $count = 10;
-        $receipts = Receipt::factory($count)->create([
-            'user_id' => $this->user->id
-        ]);
+    // public function test_get_known_customer_from_cache()
+    // {
+    //     $count = 10;
+    //     $receipts = Receipt::factory($count)->create([
+    //         'user_id' => $this->user->id
+    //     ]);
 
-        $response = $this->actingAs($this->user)->getJson('api/customer/known');
+    //     $response = $this->actingAs($this->user)->getJson('api/customer/known');
 
-        $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
 
-        $key = $this->user->id . "knownUsers";
-        $this->assertTrue(Cache::has($key));
+    //     $key = $this->user->id . "knownUsers";
+    //     $this->assertTrue(Cache::has($key));
 
-        $receipts = Receipt::factory($count)->create([
-            'user_id' => $this->user->id
-        ]);
+    //     $receipts = Receipt::factory($count)->create([
+    //         'user_id' => $this->user->id
+    //     ]);
 
-        $response = $this->actingAs($this->user)->getJson('api/customer/known');
+    //     $response = $this->actingAs($this->user)->getJson('api/customer/known');
 
-        $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
 
-        Cache::forget($key);
-        $this->assertFalse(Cache::has($key));
+    //     Cache::forget($key);
+    //     $this->assertFalse(Cache::has($key));
 
-        $response = $this->actingAs($this->user)->getJson('api/customer/known');
+    //     $response = $this->actingAs($this->user)->getJson('api/customer/known');
 
-        $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count() * 2)->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
-        $this->assertTrue(Cache::has($key));
-    }
+    //     $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count() * 2)->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
+    //     $this->assertTrue(Cache::has($key));
+    // }
 }

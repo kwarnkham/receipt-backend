@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Cache;
@@ -17,9 +18,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        // $schedule->call(function () {
-        //     Cache::clear();
-        // })->timezone('Asia/Yangon')->at('03:00');
+        $schedule->call(function () {
+            // Cache::clear();
+            User::revokeAccessTokensOfExpiredSubscriptions();
+        })->dailyAt('02:00');
+    }
+
+    protected function scheduleTimezone()
+    {
+        return 'Asia/Yangon';
     }
 
     /**

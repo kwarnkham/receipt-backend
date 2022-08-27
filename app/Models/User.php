@@ -3,9 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -70,6 +73,20 @@ class User extends Authenticatable
         return $this->roles->contains(function ($role) {
             return $role->name == 'admin';
         });
+    }
+
+    public static function revokeAccessTokensOfExpiredSubscriptions()
+    {
+        $users = DB::table('users')->get();
+        foreach ($users as $user) {
+            $subscription = DB::table('subscriptions')->where('user_id', $user->id)->orderByDesc('id')->first();
+            if ($subscription) {
+                $start = new Carbon($subscription->created_at);
+                if (today()->diffInDays($start->startOfDay()) > $subscription->duration) {
+                    DB::table('personal_access_tokens')->where('tokenable_id', $subscription->user_id)->delete();
+                }
+            }
+        }
     }
     /**
      * The attributes that are mass assignable.

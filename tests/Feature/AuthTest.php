@@ -125,4 +125,35 @@ class AuthTest extends TestCase
         ]);
         $response->assertOk();
     }
+
+    public function test_reset_password()
+    {
+        $response = $this->actingAs($this->admin)->postJson('api/user/' . $this->user->id . '/password');
+        $response->assertOk();
+        Subscription::factory()->create([
+            'user_id' => $this->user->id
+        ]);
+
+        $response = $this->postJson('api/login', [
+            'mobile' => $this->user->mobile,
+            'password' => 'password'
+        ]);
+        $response->assertOk();
+    }
+
+    public function test_only_admin_can_reset_password()
+    {
+        $response = $this->actingAs($this->user)->postJson('api/user/' . $this->user->id . '/password');
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+        $response = $this->actingAs($this->admin)->postJson('api/user/' . $this->user->id . '/password');
+        Subscription::factory()->create([
+            'user_id' => $this->user->id
+        ]);
+
+        $response = $this->postJson('api/login', [
+            'mobile' => $this->user->mobile,
+            'password' => 'password'
+        ]);
+        $response->assertOk();
+    }
 }

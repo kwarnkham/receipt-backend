@@ -34,6 +34,13 @@ class UserController extends Controller
         //
     }
 
+    public function resetPassword(User $user)
+    {
+        $user->password = bcrypt('password');
+        if ($user->save()) $user->tokens()->delete();
+        return response()->json('reset success');
+    }
+
     /**
      * Store a newly created resource in storage.
      *

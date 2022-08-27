@@ -29,6 +29,17 @@ class User extends Authenticatable
             fn ($q, $mobile) => $q->where('mobile', 'like', '%' . $mobile . '%')
         );
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function latestSubscription()
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany();
+    }
+
     public function items()
     {
         return $this->hasMany(Item::class);

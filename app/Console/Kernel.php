@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\RevokeTokensOfExpiredSubscriptionUsers;
 use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,7 +21,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             // Cache::clear();
-            User::revokeAccessTokensOfExpiredSubscriptions();
+            RevokeTokensOfExpiredSubscriptionUsers::dispatch();
         })->dailyAt('02:00');
     }
 

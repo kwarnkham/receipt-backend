@@ -7,6 +7,7 @@ use App\Http\Requests\StoreSubscriptionRequest;
 use App\Http\Requests\UpdateSubscriptionRequest;
 use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
@@ -18,6 +19,16 @@ class SubscriptionController extends Controller
     public function index()
     {
         //
+    }
+
+    public function increaseSubscription(Request $request, Subscription $subscription)
+    {
+        $request->validate([
+            'days' => ['required', 'numeric']
+        ]);
+        $subscription->duration += $request->days;
+        $subscription->save();
+        return response()->json($subscription);
     }
 
     /**

@@ -2,19 +2,30 @@
 
 namespace Tests\Unit;
 
+use App\Enums\ResponseStatus;
+use App\Models\Role;
 use App\Models\Subscription;
 use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class SubscriptionTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
+
+    private $user;
+    private $user2;
+    private $admin;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->user2 = User::factory()->create();
+        $this->admin = User::factory()->has(Role::factory(['name' => 'admin']))->create();
+    }
+
     public function test_remaining_duration()
     {
         $duration = fake()->randomNumber(3);
@@ -57,5 +68,32 @@ class SubscriptionTest extends TestCase
         $this->travel($duration + 1)->days();
         $this->assertFalse($subscription->active);
         $this->assertTrue($subscription->expired);
+    }
+
+    public function test_add_days_to_subscription()
+    {
+        $subscription = Subscription::factory()->create([
+            'user_id' => $this->user->id,
+            'day' => 30,
+            'duration' => 30
+        ]);
+        $days = fake()->randomNumber();
+        $response = $this->actingAs($this->user)->postJson('api/subscription/' . $subscription->id . '/add', [
+            'days' => $days
+        ]);
+        $response->assertStatus(ResponseStatus::UNAUTHORIZED->value);
+
+        $response = $this->actingAs($this->admin)->postJson('api/subscription/' . $subscription->id . '/add', [
+            'days' => $days
+        ]);
+        $response->assertOk();
+
+        $data = $subscription->toArray();
+        $data['duration'] += $days;
+        $response->assertJson($data);
+        $response->assertJson(fn (AssertableJson $json) => $json
+            ->has('duration')
+            ->where('duration', $data['duration'])
+            ->etc());
     }
 }

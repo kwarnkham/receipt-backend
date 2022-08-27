@@ -67,4 +67,5 @@ Route::middleware(['auth:sanctum'])->controller(ItemController::class)->group(fu
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(SubscriptionController::class)->group(function () {
     Route::post('subscription', 'store');
+    Route::post('subscription/{subscription}/add', 'increaseSubscription');
 });

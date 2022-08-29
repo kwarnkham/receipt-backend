@@ -60,7 +60,7 @@ class PaymentTest extends TestCase
         $data['created_at'] = $response->json()['payments'][0]['pivot']['created_at'];
         $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
         $response->assertJson(
-            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription')
+            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting')
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)
@@ -141,7 +141,7 @@ class PaymentTest extends TestCase
         $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
         $data['account_name'] = null;
         $response->assertJson(
-            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription')
+            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting')
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)

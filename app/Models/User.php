@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $with = ['pictures', 'roles', 'payments', 'latestSubscription'];
+    protected $with = ['pictures', 'roles', 'payments', 'latestSubscription', 'setting'];
     public function scopeFilter($query, $filters)
     {
         $query->when(
@@ -36,6 +36,11 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function setting()
+    {
+        return $this->hasOne(Setting::class);
     }
 
     public function latestSubscription()

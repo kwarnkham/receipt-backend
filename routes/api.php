@@ -5,6 +5,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PictureController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -72,4 +73,8 @@ Route::middleware(['auth:sanctum'])->controller(ItemController::class)->group(fu
 Route::middleware(['auth:sanctum', 'admin'])->controller(SubscriptionController::class)->group(function () {
     Route::post('subscription', 'store');
     Route::post('subscription/{subscription}/add', 'increaseSubscription');
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->controller(SettingController::class)->group(function () {
+    Route::post('setting/{user}', 'set');
 });

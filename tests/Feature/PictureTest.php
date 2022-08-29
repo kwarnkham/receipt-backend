@@ -69,4 +69,15 @@ class PictureTest extends TestCase
         $response = Http::get($picture->url());
         $this->assertFalse($response->ok());
     }
+
+    public function test_upload_picture_for_public()
+    {
+        Storage::fake('local');
+        $response = $this->actingAs($this->user)->postJson('api/picture/public', [
+            'picture' => UploadedFile::fake()->image('test.jpg'),
+        ]);
+
+        $response->assertOk();
+        Storage::disk('local')->assertExists($response->json());
+    }
 }

@@ -6,6 +6,7 @@ use App\Enums\ResponseStatus;
 use App\Http\Requests\StorePictureRequest;
 use App\Http\Requests\UpdatePictureRequest;
 use App\Models\Picture;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PictureController extends Controller
@@ -57,6 +58,13 @@ class PictureController extends Controller
             $picture = Picture::create($data);
         }
         return response()->json($picture, ResponseStatus::CREATED->value);
+    }
+
+    public function storePublic(Request $request)
+    {
+        $request->validate(['picture' => ['required', 'image']]);
+
+        return response()->json($request->file('picture')->store('print'));
     }
 
     /**

@@ -38,8 +38,12 @@ Route::middleware('auth:sanctum')->controller(AuthController::class)->group(func
     Route::post('password', 'changePassword');
 });
 
-Route::middleware(['auth:sanctum'])->controller(PictureController::class)->group(function () {
+Route::middleware(['auth:sanctum', 'admin'])->controller(PictureController::class)->group(function () {
     Route::post('picture', 'store');
+});
+
+Route::middleware(['auth:sanctum'])->controller(PictureController::class)->group(function () {
+    Route::post('picture/public', 'storePublic');
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(UserController::class)->group(function () {

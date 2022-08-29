@@ -64,7 +64,7 @@ class PictureController extends Controller
     {
         $request->validate(['picture' => ['required', 'image']]);
 
-        return response()->json($request->file('picture')->store('print'));
+        return response()->json($request->file('picture')->store('public/print'));
     }
 
     /**

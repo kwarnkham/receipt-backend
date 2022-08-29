@@ -37,14 +37,15 @@ class SettingTest extends TestCase
             'table_color' => '#719189'
         ]);
         $response->assertOk();
-        $response->assertJson(fn (AssertableJson $json) => $json->where('setting.table_color', '#719189')->etc());
+
+        $response->assertJson(fn (AssertableJson $json) => $json->where('table_color', '#719189')->etc());
         $this->assertDatabaseCount('settings', 1);
 
         $response = $this->actingAs($this->admin)->postJson('api/setting/' . $this->user->id, [
             'table_color' => '#719180'
         ]);
         $response->assertOk();
-        $response->assertJson(fn (AssertableJson $json) => $json->where('setting.table_color', '#719180')->etc());
+        $response->assertJson(fn (AssertableJson $json) => $json->where('table_color', '#719180')->etc());
         $this->assertDatabaseCount('settings', 1);
     }
 }

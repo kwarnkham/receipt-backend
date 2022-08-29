@@ -41,7 +41,7 @@ class SettingController extends Controller
         } else {
             $user->setting()->create($data);
         }
-        return response()->json($user->fresh());
+        return response()->json($user->fresh()->setting);
     }
 
     /**

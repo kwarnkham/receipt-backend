@@ -31,4 +31,5 @@ return [
 
     'supports_credentials' => false,
 
+    'android_app_id' => env("ANDROID_APP_ID")
 ];

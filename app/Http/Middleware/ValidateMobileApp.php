@@ -17,7 +17,7 @@ class ValidateMobileApp
      */
     public function handle(Request $request, Closure $next)
     {
-        abort_if($request->headers->get('origin') == 'http://localhost' && $request->headers->get('x-requested-with') != 'org.madewithheart.receipt.app', ResponseStatus::BAD_REQUEST, "CORS");
+        abort_if($request->headers->get('origin') == 'http://localhost' && $request->headers->get('x-requested-with') != config('cors')['android_app_id'], ResponseStatus::BAD_REQUEST, "CORS");
         return $next($request);
     }
 }

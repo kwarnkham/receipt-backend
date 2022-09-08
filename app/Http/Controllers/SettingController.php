@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateSettingRequest;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
@@ -19,6 +19,18 @@ class SettingController extends Controller
     public function index()
     {
         //
+    }
+
+    public function appConfig()
+    {
+        $apks = Storage::disk('s3')->files(env('APP_NAME') . '/apk');
+        $version = count($apks) > 0 ? basename($apks[array_key_last($apks)]) : null; //PhoneVoucherV1.0.7.apk
+        if($version) {
+            $version = explode('.', explode('V', $version)[array_key_last(explode('V', $version))]); //["1", "0", "7", "apk"]
+            array_pop($version);
+            $version = implode('.',$version);
+        }
+        return response()->json(compact('version'));
     }
 
     /**

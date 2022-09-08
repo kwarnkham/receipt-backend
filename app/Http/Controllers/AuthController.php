@@ -6,11 +6,13 @@ use App\Enums\ResponseStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        Log::info($request->header('host'));
         $data = $request->validate([
             'mobile' => ['required', 'exists:users,mobile'],
             'password' => ['required']

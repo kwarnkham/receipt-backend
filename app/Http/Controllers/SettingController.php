@@ -23,7 +23,7 @@ class SettingController extends Controller
 
     public function appConfig()
     {
-        $apks = Storage::disk('s3')->files(env('APP_NAME') . '/apk');
+        $apks = Storage::disk('s3')->files(config('app')['name'] . '/apk');
         $version = count($apks) > 0 ? basename($apks[array_key_last($apks)]) : null; //PhoneVoucherV1.0.7.apk
         if($version) {
             $version = explode('.', explode('V', $version)[array_key_last(explode('V', $version))]); //["1", "0", "7", "apk"]

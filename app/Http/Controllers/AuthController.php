@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        Log::info($request->headers->all());
+        Log::info($request->headers->get('x-requested-with'));
         $data = $request->validate([
             'mobile' => ['required', 'exists:users,mobile'],
             'password' => ['required']

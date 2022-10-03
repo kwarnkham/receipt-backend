@@ -11,6 +11,7 @@ class Subscription extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $appends = ['remaining_duration'];
 
     public function user()
     {
@@ -20,19 +21,21 @@ class Subscription extends Model
     public function expired(): Attribute
     {
         return Attribute::make(
-            fn () => $this->remainingDuration() < 0
+            fn () => $this->remainingDuration < 0
         );
     }
 
     public function active(): Attribute
     {
         return Attribute::make(
-            fn () => $this->remainingDuration() >= 0
+            fn () => $this->remainingDuration >= 0
         );
     }
 
-    public function remainingDuration()
+    public function remainingDuration(): Attribute
     {
-        return $this->duration - $this->created_at->startOfDay()->diffInDays(today());
+        return Attribute::make(
+            fn () => $this->duration - $this->created_at->startOfDay()->diffInDays(today())
+        );
     }
 }

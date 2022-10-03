@@ -53,8 +53,8 @@ class SubscriptionController extends Controller
         $user = User::find($data['user_id']);
 
         $existing = $user->latestSubscription;
-        if ($existing && $existing->remainingDuration() >= 1) {
-            $data['duration'] = $data['day'] + $existing->remainingDuration();
+        if ($existing && $existing->remainingDuration >= 1) {
+            $data['duration'] = $data['day'] + $existing->remainingDuration;
         } else {
             $data['duration'] = $data['day'];
         }

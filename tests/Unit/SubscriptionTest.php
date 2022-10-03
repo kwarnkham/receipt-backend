@@ -36,16 +36,16 @@ class SubscriptionTest extends TestCase
             'day' => $duration
         ]);
 
-        $this->assertEquals($subscription->remainingDuration(), $duration);
+        $this->assertEquals($subscription->remainingDuration, $duration);
 
         for ($i = 1; $i <= $duration; $i++) {
             $this->travel($i)->days();
-            $this->assertEquals($subscription->remainingDuration(), $duration - $i);
+            $this->assertEquals($subscription->remainingDuration, $duration - $i);
             $this->travelBack();
         }
         $this->travel($duration + 1)->days();
 
-        $this->assertLessThan(0, $subscription->remainingDuration());
+        $this->assertLessThan(0, $subscription->remainingDuration);
 
         $this->assertTrue($subscription->expired);
         $this->assertFalse($subscription->active);
@@ -61,7 +61,7 @@ class SubscriptionTest extends TestCase
             'day' => $duration,
 
         ]);
-        $this->assertEquals($subscription->remainingDuration(), $duration);
+        $this->assertEquals($subscription->remainingDuration, $duration);
         $this->travel($duration)->days();
         $this->assertFalse($subscription->expired);
         $this->assertTrue($subscription->active);
@@ -90,6 +90,7 @@ class SubscriptionTest extends TestCase
 
         $data = $subscription->toArray();
         $data['duration'] += $days;
+        $data['remaining_duration'] += $days;
         $response->assertJson($data);
         $response->assertJson(fn (AssertableJson $json) => $json
             ->has('duration')

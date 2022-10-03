@@ -72,7 +72,7 @@ class SubscriptionTest extends TestCase
         $response->assertCreated();
         $response->assertJson($data);
 
-        $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
+        $this->assertEquals($this->user->latestSubscription->remainingDuration, $data['duration']);
 
         $this->travel(60)->days();
 
@@ -96,6 +96,6 @@ class SubscriptionTest extends TestCase
         $response->assertJson($data);
         $this->user = $this->user->fresh();
 
-        $this->assertEquals($this->user->latestSubscription->remainingDuration(), $data['duration']);
+        $this->assertEquals($this->user->latestSubscription->remainingDuration, $data['duration']);
     }
 }

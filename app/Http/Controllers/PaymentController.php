@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ResponseStatus;
-use App\Http\Requests\StorepaymentRequest;
+use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatepaymentRequest;
 use App\Models\Payment;
 use App\Models\User;
@@ -89,10 +89,10 @@ class PaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorepaymentRequest  $request
+     * @param  \App\Http\Requests\StorePaymentRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorepaymentRequest $request)
+    public function store(StorePaymentRequest $request)
     {
         $data = $request->validated();
         $payment = Payment::create($data);

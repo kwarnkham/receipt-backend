@@ -35,6 +35,12 @@ class ReceiptController extends Controller
         return response()->json($receipts);
     }
 
+    public function all(Request $request)
+    {
+        return response()->json($request->user()->receipts);
+    }
+
+
     public function getKnownCustomers(Request $request)
     {
         $user = $request->user();

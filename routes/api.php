@@ -28,7 +28,7 @@ Route::middleware('auth:sanctum')->controller(ReceiptController::class)->group(f
     Route::get('receipt', 'index');
     Route::get('customer/known', 'getKnownCustomers');
     Route::get('receipt/{receipt}', 'show')->whereNumber('receipt');
-    Route::get('receipt/all', 'all');
+    Route::get('receipt/all', 'all')->middleware(['throttle:downloadAllReceipts']);
 });
 
 Route::controller(AuthController::class)->group(function () {

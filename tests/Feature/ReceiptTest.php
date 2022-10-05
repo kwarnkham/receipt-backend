@@ -439,13 +439,14 @@ class ReceiptTest extends TestCase
         $response = $this->actingAs($this->user)->getJson('api/customer/known');
         // dump(collect($response->json())->unique('mobile'));
         // dump($response->json());
+        $this->assertTrue(is_array($response->json()));
         $response->assertJson(fn (AssertableJson $json) => $json->has($receipts->unique('customer_phone')->count())->first(fn ($json) => $json->hasAll('name', 'address', 'mobile')));
         $response->assertStatus(200);
     }
 
     public function test_get_all_receipts_of_a_client()
     {
-        $count = rand(1,100);
+        $count = rand(1, 100);
         $receipts = Receipt::factory($count)->create([
             'customer_phone' => '000',
             'user_id' => $this->user->id

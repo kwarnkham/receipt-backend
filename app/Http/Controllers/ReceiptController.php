@@ -51,7 +51,7 @@ class ReceiptController extends Controller
             'name' => $value->customer_name,
             'mobile' => $value->customer_phone,
             'address' => $value->customer_address,
-        ])->unique('mobile'));
+        ])->unique('mobile')->values());
     }
 
     /**

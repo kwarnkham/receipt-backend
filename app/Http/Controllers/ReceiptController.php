@@ -7,6 +7,7 @@ use App\Http\Requests\StoreReceiptRequest;
 use App\Http\Requests\UpdateReceiptRequest;
 use App\Models\Item;
 use App\Models\Receipt;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,6 +39,11 @@ class ReceiptController extends Controller
     public function all(Request $request)
     {
         return response()->json($request->user()->receipts);
+    }
+
+    public function allByUser(User $user)
+    {
+        return response()->json($user->receipts);
     }
 
 

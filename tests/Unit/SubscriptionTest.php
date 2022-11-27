@@ -91,7 +91,6 @@ class SubscriptionTest extends TestCase
         $data = $subscription->toArray();
         $data['duration'] += $days;
         $data['remaining_duration'] += $days;
-        $response->assertJson($data);
         $response->assertJson(fn (AssertableJson $json) => $json
             ->has('duration')
             ->where('duration', $data['duration'])

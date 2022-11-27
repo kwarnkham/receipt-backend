@@ -25,7 +25,7 @@ class StorePictureRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'type' => ['required', 'in:1,2'],
+            'type' => ['required', 'in:1,2,3'],
             'picture' => ['required', 'image']
         ];
     }

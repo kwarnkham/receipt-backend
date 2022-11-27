@@ -17,7 +17,7 @@ class PhoneFactory extends Factory
     public function definition()
     {
         return [
-            'number' => fake()->phoneNumber()
+            'number' => fake()->randomNumber(9)
         ];
     }
 }

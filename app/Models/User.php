@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $with = ['pictures', 'roles', 'payments', 'latestSubscription', 'setting'];
+    protected $with = ['pictures', 'roles', 'payments', 'latestSubscription', 'setting', 'phones'];
     public function scopeFilter($query, $filters)
     {
         $query->when(

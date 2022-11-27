@@ -38,6 +38,11 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function phones()
+    {
+        return $this->hasMany(Phone::class);
+    }
+
     public function setting()
     {
         return $this->hasOne(Setting::class);

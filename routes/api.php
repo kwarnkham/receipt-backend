@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PhoneController;
 use App\Http\Controllers\PictureController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\SettingController;
@@ -70,6 +71,12 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(PaymentController::clas
 
 Route::middleware(['auth:sanctum'])->controller(ItemController::class)->group(function () {
     Route::get('item/known', 'getKnownItems');
+});
+
+Route::middleware(['auth:sanctum'])->controller(PhoneController::class)->group(function () {
+    Route::post('phones', 'store')->name('phones.store');
+    Route::delete('phones/{phone}', 'destroy')->name('phones.destroy');
+    Route::put('phones/{phone}', 'update')->name('phones.update');
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->controller(SubscriptionController::class)->group(function () {

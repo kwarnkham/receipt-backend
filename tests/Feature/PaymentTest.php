@@ -60,7 +60,7 @@ class PaymentTest extends TestCase
         $data['created_at'] = $response->json()['payments'][0]['pivot']['created_at'];
         $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
         $response->assertJson(
-            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting')
+            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting', 'phones')
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)
@@ -124,7 +124,7 @@ class PaymentTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_apply_payment_exclude_account_name()
+    public function test_apply_payment_without_account_name()
     {
         $payment = Payment::factory()->create();
         $number = fake()->randomNumber(5);
@@ -137,11 +137,9 @@ class PaymentTest extends TestCase
         $response->assertOk();
         $this->assertDatabaseCount('user_payment', 1);
         $this->assertDatabaseHas('user_payment', $data);
-        $data['created_at'] = $response->json()['payments'][0]['pivot']['created_at'];
-        $data['updated_at'] = $response->json()['payments'][0]['pivot']['updated_at'];
-        $data['account_name'] = null;
+
         $response->assertJson(
-            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting')
+            fn (AssertableJson $json) => $json->hasAll('id', 'name', 'mobile', 'created_at', 'updated_at', 'pictures', 'roles', 'payments', 'latest_subscription', 'setting', 'phones')
                 ->has(
                     'payments.0',
                     fn (AssertableJson $json) => $json->where('id', $payment->id)

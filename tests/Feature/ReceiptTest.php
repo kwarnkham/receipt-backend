@@ -82,6 +82,30 @@ class ReceiptTest extends TestCase
         $this->assertDatabaseCount('items', 1);
     }
 
+    public function test_draft_a_receipt()
+    {
+        $response = $this->actingAs($this->user)->postJson('api/receipt', [
+            'date' => now(),
+            'customer_name' => fake()->name(),
+            'customer_phone' => fake()->phoneNumber(),
+            'customer_address' => fake()->address(),
+            'status' => '2',
+            'items' => [
+                [
+                    'name' => fake()->unique()->name(),
+                    'price' => 1000,
+                    'quantity' => 1,
+                ],
+            ]
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseCount('receipts', 1);
+        $this->assertDatabaseCount('receipt_item', 1);
+        $this->assertDatabaseCount('items', 1);
+        $this->assertEquals($response->json()['status'], 2);
+    }
+
     public function test_create_receipt_from_existing_items()
     {
         $items = Item::factory(2)->create([

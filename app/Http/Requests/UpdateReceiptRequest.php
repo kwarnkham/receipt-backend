@@ -13,7 +13,7 @@ class UpdateReceiptRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return $this->user()->id == $this->receipt->user_id;
     }
 
     /**
@@ -24,7 +24,19 @@ class UpdateReceiptRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'date' => ['required', 'date'],
+            'customer_name' => ['required'],
+            'customer_phone' => ['required'],
+            'customer_address' => ['required'],
+            'discount' => ['numeric'],
+            'deposit' => ['numeric'],
+            'items' => ['required', 'array'],
+            'items.*' => ['required', 'array'],
+            'items.*.name' => ['required'],
+            'items.*.price' => ['required', 'numeric'],
+            'items.*.quantity' => ['required', 'numeric'],
+            'note' => ['string', 'max:255'],
+            'status' => ['required', 'in:1,2']
         ];
     }
 }

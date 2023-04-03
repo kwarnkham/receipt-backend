@@ -9,7 +9,8 @@ use App\Models\Item;
 use App\Models\Receipt;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReceiptController extends Controller
 {
@@ -80,7 +81,7 @@ class ReceiptController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
-        abort_if($user->isAdmin(), ResponseStatus::UNAUTHORIZED->value);
+        abort_if($user->isAdmin(), ResponseStatus::UNAUTHORIZED->value, "Admin cannot add receipt");
         $data['user_id'] = $user->id;
         $receipt = Receipt::create($data);
         $items = [];
@@ -142,7 +143,46 @@ class ReceiptController extends Controller
      */
     public function update(UpdateReceiptRequest $request, Receipt $receipt)
     {
-        //
+        $data = $request->validated();
+        $user = $request->user();
+        $receipt = DB::transaction(function () use ($receipt, $data, $user) {
+            $receipt->update([
+                'date' => $data['date'],
+                'customer_name' => $data['customer_name'],
+                'customer_phone' => $data['customer_phone'],
+                'customer_address' => $data['customer_address'],
+                'discount' => $data['discount'] ?? 0,
+                'deposit' => $data['deposit'] ?? 0,
+                'note' => $data['note'] ?? '',
+                'status' => $data['status']
+            ]);
+
+            $items = [];
+            foreach ($data['items'] as $value) {
+                $item = Item::query()->where([
+                    'user_id' => $user->id,
+                    'name' => $value['name']
+                ])->first();
+
+                if ($item) {
+                    $item->price = $value['price'];
+                    $item->save();
+                } else {
+                    $item = $user->items()->create($value);
+                }
+
+                $item->quantity = $value['quantity'];
+                $items[] = $item;
+            }
+
+            $receipt->items()->detach();
+            $receipt->items()->attach(collect($items)->mapWithKeys(function ($item) {
+                return [$item->id => ['price' => $item->price, 'quantity' => $item->quantity]];
+            }));
+            return $receipt;
+        });
+
+        return response()->json($receipt);
     }
 
     /**

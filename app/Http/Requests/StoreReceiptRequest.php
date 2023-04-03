@@ -35,7 +35,7 @@ class StoreReceiptRequest extends FormRequest
             'items.*.name' => ['required'],
             'items.*.price' => ['required', 'numeric'],
             'items.*.quantity' => ['required', 'numeric'],
-            'note' => ['string'],
+            'note' => ['string', 'max:255'],
             'status' => ['sometimes', 'required', 'in:1,2']
         ];
     }

@@ -36,8 +36,7 @@ class PictureTest extends TestCase
         $response->assertCreated();
         $this->assertDatabaseCount('pictures', 1);
         $picture = Picture::find($response->json()['id']);
-        $response = Http::get($picture->url());
-        $this->assertTrue($response->ok());
+        $this->assertTrue(Storage::exists($picture->name));
         $this->assertTrue($picture->deleteFromCloud());
     }
 
@@ -72,12 +71,12 @@ class PictureTest extends TestCase
 
     public function test_upload_picture_for_public()
     {
-        Storage::fake('local');
+        Storage::fake('public');
         $response = $this->actingAs($this->user)->postJson('api/picture/public', [
             'picture' => UploadedFile::fake()->image('test.jpg'),
         ]);
 
         $response->assertOk();
-        Storage::disk('local')->assertExists($response->json());
+        Storage::disk('public')->assertExists($response->json());
     }
 }

@@ -17,11 +17,11 @@ class Picture extends Model
 
     public function url()
     {
-        return config('filesystems')['disks']['s3']['url'] . "/" . config('app')['name'] . "/" . $this->name;
+        return Storage::url($this->name);
     }
 
     public function deleteFromCloud()
     {
-        return Storage::disk('s3')->delete(config('app')['name'] . "/" . $this->name);
+        return Storage::delete($this->name);
     }
 }

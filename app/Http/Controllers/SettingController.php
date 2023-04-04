@@ -21,20 +21,6 @@ class SettingController extends Controller
         //
     }
 
-    public function appConfig()
-    {
-        $version = basename(collect(Storage::disk('s3')->files(config('app')['name'] . '/apk'))->sortByDesc(
-            fn ($apk) => Storage::disk('s3')->lastModified($apk)
-        )->values()->toArray()[0]); //PhoneVoucherV1.0.7.apk
-
-        if ($version) {
-            $version = explode('.', explode('V', $version)[array_key_last(explode('V', $version))]); //["1", "0", "7", "apk"]
-            array_pop($version);
-            $version = implode('.', $version);
-        }
-        return response()->json(compact('version'));
-    }
-
     /**
      * Show the form for creating a new resource.
      *

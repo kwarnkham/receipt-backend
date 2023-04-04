@@ -87,7 +87,3 @@ Route::middleware(['auth:sanctum', 'admin'])->controller(SubscriptionController:
 Route::middleware(['auth:sanctum', 'admin'])->controller(SettingController::class)->group(function () {
     Route::post('setting/{user}', 'set');
 });
-
-Route::controller(SettingController::class)->group(function () {
-    Route::get('app-config', 'appConfig');
-});

@@ -40,11 +40,8 @@ class PictureController extends Controller
     public function store(StorePictureRequest $request)
     {
         $data = $request->validated();
-        $name = Storage::disk('s3')->putFile(config('app')['name'] . "/users", $data['picture'], 'public');
-        abort_unless($name, ResponseStatus::SERVER_ERROR->value, 'Failed to upload to S3 storage');
-        $name = explode('/', $name);
-        array_shift($name);
-        $data['name'] = implode('/', $name);
+        $data['name'] = Storage::putFile("/users", $data['picture'], 'public');
+        abort_unless($data['name'], ResponseStatus::SERVER_ERROR->value, 'Failed to upload to S3 storage');
 
         $picture = Picture::where([
             'user_id' => $data['user_id'],

@@ -182,7 +182,7 @@ class ReceiptController extends Controller
             return $receipt;
         });
 
-        return response()->json($receipt);
+        return response()->json($receipt->load(['user']));
     }
 
     /**

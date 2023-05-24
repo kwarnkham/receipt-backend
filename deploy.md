@@ -54,8 +54,6 @@ chown -R nginx:nginx /etc/nginx/html/receipt-backend/storage /etc/nginx/html/rec
 chmod -R 0777 /etc/nginx/html/receipt-backend/storage
 chmod -R 0775 /etc/nginx/html/receipt-backend/bootstrap/cache
 
-systemctl restart nginx
-
 backup db
 
 scp receipt.dump root@coffee.book-mm.com:/root/
@@ -63,5 +61,5 @@ mysql receipt < /root/receipt.dump
 
 php artisan optimize && php artisan view:cache
 
-
+systemctl restart nginx
 ```

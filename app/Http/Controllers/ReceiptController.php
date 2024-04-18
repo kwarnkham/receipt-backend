@@ -179,7 +179,7 @@ class ReceiptController extends Controller
             $receipt->items()->attach(collect($items)->mapWithKeys(function ($item) {
                 return [$item->id => ['price' => $item->price, 'quantity' => $item->quantity]];
             }));
-            return $receipt;
+            return $receipt->fresh();
         });
 
         return response()->json($receipt->load(['user']));

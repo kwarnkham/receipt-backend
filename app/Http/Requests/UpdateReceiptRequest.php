@@ -27,7 +27,7 @@ class UpdateReceiptRequest extends FormRequest
             'date' => ['required', 'date'],
             'customer_name' => ['required'],
             'customer_phone' => ['required'],
-            'customer_address' => ['required'],
+            'customer_address' => ['required', 'max:255'],
             'discount' => ['numeric'],
             'deposit' => ['numeric'],
             'items' => ['required', 'array'],
